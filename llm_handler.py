@@ -1,9 +1,13 @@
 from langchain_openai import ChatOpenAI
+from requests_toolbelt.multipart.encoder import reset
+from langchain_core.output_parsers import PydanticToolsParser
 from typing_extensions import Annotated, TypedDict, Optional
+from langchain_core.messages import HumanMessage
 from typing import Type
 import os
 import json
 from models import Joke
+from tools import *
 
 stream_llm = ChatOpenAI(
         api_key=os.getenv("OPENAI_API_KEY"),
@@ -49,3 +53,20 @@ def teach_ai(input, examples, prompt, class_type: Type[TypedDict]):
         }
     }):
         print(chunk)
+
+def answer_by_tool(query: str):
+    llm_with_tools = normal_llm.bind_tools(tools)
+    messages = [HumanMessage(query)]
+    ai_msg = llm_with_tools.invoke(messages)
+
+    print(ai_msg.tool_calls)
+    messages.append(ai_msg)
+
+    print("message_ai_msg", messages)
+    for tool_call in ai_msg.tool_calls:
+        selected_tool = {"add": add, "multiply": multiply}[tool_call["name"].lower()]
+        tool_msg = selected_tool.invoke(tool_call)
+        messages.append(tool_msg)
+    print("message_tool_msg", messages)
+    response = llm_with_tools.invoke(messages)
+    print("message_response", response)
