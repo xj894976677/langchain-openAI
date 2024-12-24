@@ -1,9 +1,11 @@
-import getpass
-import os
+from llm_handler import get_struct_answer, get_answer, teach_ai
+from models import Joke
+from examples import prompt, examples
 
-if not os.environ.get("OPENAI_API_KEY"):
-  os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter API key for OpenAI: ")
+if __name__ == "__main__":
+    teach_ai("Tell me a joke about planes", examples, prompt, Joke)
+    get_answer("你是谁？")
 
-from langchain_openai import ChatOpenAI
+    get_struct_answer("Tell me a joke about planes", Joke)
 
-llm = ChatOpenAI(model="gpt-4o-mini")
+
