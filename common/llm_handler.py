@@ -7,7 +7,7 @@ from typing import Type
 import os
 import json
 from models import Joke
-from tools import *
+from demo_tools import *
 from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.llms import Tongyi
@@ -26,6 +26,7 @@ stream_llm = ChatOpenAI(
         # 通过以下设置，在流式输出的最后一行展示token使用信息
         stream_options={"include_usage": True}
         )
+
 normal_llm = ChatOpenAI(
         api_key=os.getenv("OPENAI_API_KEY"),
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
@@ -72,7 +73,7 @@ def answer_by_tool(query: str):
     messages.append(ai_msg)
     print("message_ai_msg", messages)
     for tool_call in ai_msg.tool_calls:
-        selected_tool = {"add": add, "multiply": multiply}[tool_call["name"].lower()]
+        selected_tool = {"add": add, "multiply": multiply, "gettweet": getTweet}[tool_call["name"].lower()]
         tool_msg = selected_tool.invoke(tool_call)
         messages.append(tool_msg)
     print("message_tool_msg", messages)

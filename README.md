@@ -9,6 +9,14 @@ pip install --upgrade --quiet langchain-community dashscope
 pip install -U langgraph
 
 pip install transformers
+
+# 代理功能所需的全部包
+pip install -U langchain-community langgraph langchain-anthropic tavily-python langgraph-checkpoint-sqlite
+pip install tweepy
+
+1. https://tavily.com/ 访问这个网站获取 Tavilys Search API 并且添加到环境变量中 TAVILY_API_KEY
+
+
 ```
 
 ## Usage
