@@ -9,7 +9,7 @@ if __name__ == "__main__":
     # get_answer("你是谁？")
     # get_struct_answer("Tell me a joke about planes", Joke)
     #
-    answer_by_tool("elonmusk 最新的一条帖文是什么内容")
+    # answer_by_tool("elonmusk 最新的一条帖文是什么内容")
     # asyncio.get_event_loop().run_until_complete(query_stream("what color is the sky?"))
     # asyncio.get_event_loop().run_until_complete(parser_stream("parrot"))
     # asyncio.get_event_loop().run_until_complete(get_country(
@@ -24,5 +24,5 @@ if __name__ == "__main__":
     # trimmer()
     # 测试推文
     # asyncio.get_event_loop().run_until_complete(getTwitter())
-    # asyncio.get_event_loop().run_until_complete(getAdd())
+    asyncio.get_event_loop().run_until_complete(getTwitter())
 

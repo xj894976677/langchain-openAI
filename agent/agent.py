@@ -5,6 +5,7 @@ from langgraph.prebuilt import create_react_agent
 from common.llm_handler import normal_llm
 from langgraph.checkpoint.memory import MemorySaver
 
+from demo_tools import tools
 from tools.math import math_tool
 from tools.twitter import twitter_tool
 
@@ -12,7 +13,7 @@ search = TavilySearchResults(max_results=2)
 search_results = search.invoke("what is the weather in SF")
 # If we want, we can create other tools.
 # Once we have all the tools we want, we can put them in a list that we will reference later.
-tools = [math_tool]
+
 memory = MemorySaver()
 agent_executor = create_react_agent(normal_llm, tools, checkpointer=memory)
 
@@ -28,7 +29,7 @@ async def getTwitter():
     # await answer(config, "hi im bob!")
     # await answer(config, "what is my name?")
     await answer(config, "elonmusk 最新的一条帖文是什么内容？")
-
+    await answer(config, "从elonmusk 最新的帖文能看出什么东西？")
 
 
 async def answer(config, query):
@@ -39,7 +40,14 @@ async def answer(config, query):
         if kind == "on_chat_model_stream":
             content = event["data"]["chunk"].content
             if content:
-                # Empty content in the context of OpenAI means
-                # that the model is asking for a tool to be invoked.
-                # So we only print non-empty content
                 print(content, end="|")
+
+        # 处理工具调用
+        if "tool_calls" in event["data"]:
+            for tool_call in event["data"]["tool_calls"]:
+                # 识别工具并处理返回结果
+                tool_name = tool_call["name"]
+                if tool_name == "add_two_number":
+                    arguments = tool_call["arguments"]
+                    result = math_tool.run(**arguments)
+                    print(f"工具 {tool_name} 返回结果: {result}")
