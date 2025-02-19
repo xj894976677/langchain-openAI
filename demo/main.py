@@ -1,8 +1,8 @@
-from agent.agent import getTwitter, getAdd
+from agent.agent import getTwitter, getAdd, deekFollowers
 from chat_bot import chat
 import asyncio
 
-from common.llm_handler import answer_by_tool
+from common.llm_handler import answer_by_tool, get_answer
 
 if __name__ == "__main__":
     # teach_ai("Tell me a joke about planes", examples, prompt, Joke)
@@ -23,6 +23,9 @@ if __name__ == "__main__":
     # asyncio.get_event_loop().run_until_complete(async_chat(""))
     # trimmer()
     # 测试推文
+    # asyncio.get_event_loop().run_until_complete(getAdd())
     # asyncio.get_event_loop().run_until_complete(getTwitter())
-    asyncio.get_event_loop().run_until_complete(getTwitter())
+    # asyncio.get_event_loop().run_until_complete(deekTweet())
+    asyncio.get_event_loop().run_until_complete(deekFollowers())
+
 

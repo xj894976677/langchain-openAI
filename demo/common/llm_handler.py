@@ -1,17 +1,9 @@
 from langchain_openai import ChatOpenAI
-from requests_toolbelt.multipart.encoder import reset
-from langchain_core.output_parsers import PydanticToolsParser
-from typing_extensions import Annotated, TypedDict, Optional
 from langchain_core.messages import HumanMessage
 from typing import Type
-import os
-import json
-from models import Joke
-from demo_tools import *
+from demo.demo_tools import *
 from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
-from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.llms import Tongyi
-from getpass import getpass
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_core.prompts import ChatPromptTemplate
@@ -27,11 +19,38 @@ stream_llm = ChatOpenAI(
         stream_options={"include_usage": True}
         )
 
+def get_tool_schema(tool):
+    """获取工具的 schema 定义"""
+    schema = {
+        "type": "function",
+        "function": {
+            "name": tool.name,
+            "description": tool.description,
+        }
+    }
+    
+    if hasattr(tool, 'args_schema'):
+        # 如果工具有 args_schema，使用它的 schema
+        schema["function"]["parameters"] = tool.args_schema.schema()
+    else:
+        # 否则使用默认的空参数
+        schema["function"]["parameters"] = {
+            "type": "object",
+            "properties": {},
+            "required": []
+        }
+    
+    return schema
+
 normal_llm = ChatOpenAI(
-        api_key=os.getenv("OPENAI_API_KEY"),
-        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
-        model="qwen-plus"
-        )
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+    model="qwen-plus",
+    model_kwargs={
+        "tool_choice": "auto",
+        "tools": [get_tool_schema(tool) for tool in tools]
+    }
+)
 
 def get_answer(message: str):
     messages = [

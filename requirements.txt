@@ -1,0 +1,6 @@
+langchain>=0.1.0
+langchain-community>=0.0.20
+dashscope>=1.13.0  # 阿里云 Qwen API SDK
+python-dotenv>=0.19.0
+pydantic>=2.0.0
+langchain-experimental>=0.0.49
